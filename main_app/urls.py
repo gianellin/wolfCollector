@@ -10,5 +10,6 @@ urlpatterns = [
     path('wolfs/create/', views.WolfCreate.as_view(), name='wolfs_create'),
     path('wolfs/<int:pk>/update/', views.WolfUpdate.as_view(), name='wolfs_update'),
     path('wolfs/<int:pk>/delete/', views.WolfDelete.as_view(), name='wolfs_delete'),
+    path('wolfs/<int:wolf_id>/add_feeding/', views.add_feeding, name='add_feeding'),
 ]
 

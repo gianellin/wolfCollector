@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 # Add the following import
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .models import Wolf
+from .forms import FeedingForm
 
 # Create your views here.
 
@@ -18,7 +19,20 @@ def wolfs_index(request):
 
 def wolfs_detail(request, wolf_id):
   wolf = Wolf.objects.get(id=wolf_id)
-  return render(request, 'wolfs/detail.html', { 'wolf': wolf })
+  # instantiate FeedingForm to be rendered in the template
+  feeding_form = FeedingForm()
+  return render(request, 'wolfs/detail.html', { 'wolf': wolf, 'feeding_form': feeding_form })
+
+def add_feeding(request, wolf_id):
+  form = FeedingForm(request.POST)
+  # validate the form
+  if form.is_valid():
+    # don't save the form to the db until it
+    # has the cat_id assigned
+    new_feeding = form.save(commit=False)
+    new_feeding.wolf_id = wolf_id
+    new_feeding.save()
+    return redirect('detail', wolf_id=wolf_id)
 
 class WolfCreate(CreateView):
   model = Wolf
@@ -27,11 +41,13 @@ class WolfCreate(CreateView):
 
 class WolfUpdate(UpdateView):
   model = Wolf
-  # Let's disallow the renaming of a cat by excluding the name field!
+  # Let's disallow the renaming of a wolf by excluding the name field!
   fields = ['breed', 'description', 'age']
 
 class WolfDelete(DeleteView):
   model = Wolf
   success_url = '/wolfs/'
+
+
 
 
