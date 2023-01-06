@@ -1,6 +1,7 @@
 from django.db import models
 # Import the reverse function
 from django.urls import reverse
+from datetime import date
 
 # Create your models here.
 MEALS = (
@@ -33,9 +34,16 @@ class Feeding(models.Model):
     # set the default value for meal to be 'B'
     default=MEALS[0][0]
   )
+  def fed_for_today(self):
+    return self.feeding_set.filter(date=date.today()).count() >= len(MEALS)
+    
    # Create a cat_id FK
   wolf = models.ForeignKey(Wolf, on_delete=models.CASCADE)
 
   def __str__(self):
     # Nice method for obtaining the friendly value of a Field.choice
     return f"{self.get_meal_display()} on {self.date}"
+ # change the default sort
+  class Meta:
+    ordering = ['-date']
+
