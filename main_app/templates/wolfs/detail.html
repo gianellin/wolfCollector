@@ -14,6 +14,12 @@
       <p>Age: Wolfy</p>
     {% endif %}
   </div>
+  <!-- Add the following markup -->
+  <div class="card-action">
+    <a href="{% url 'wolfs_update' wolf.id %}">Edit</a>
+    <a href="{% url 'wolfs_delete' wolf.id %}">Delete</a>
+  </div>
+  <!-- New markup above -->
 </div>
 
 {% endblock %}

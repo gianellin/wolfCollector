@@ -18,9 +18,10 @@
           <li><a href="/" class="left brand-logo">&nbsp;&nbsp;WolfCollector</a></li>
         </ul>
         <ul class="right">
-            <li><a href="/about">About</a></li>
+            <li><a href="{% url 'about' %}">About</a></li>
             <!-- new markup below -->
-            <li><a href="/wolfs">View All My Wolfs</a></li>       
+            <li><a href="{% url 'wolfs_create' %}">Add a Wolf</a></li>
+            <li><a href="{% url 'index' %}">View All My Wolfs</a></li>       
 
         </ul>
       </div>
