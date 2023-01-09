@@ -5,7 +5,7 @@
 
 {% for wolf in wolfs %}
   <div class="card">
-    <a href="{% url 'detail' wolf.id %}">
+    <a href="{% url 'detail' wolf.id %}" class="black-text">
       <div class="card-content">
         <span class="card-title">{{ wolf.name }}</span>
         <p>Breed: {{ wolf.breed }}</p>
