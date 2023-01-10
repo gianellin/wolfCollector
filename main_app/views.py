@@ -2,13 +2,16 @@ from django.shortcuts import render, redirect
 # Add the following import
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
-from .models import Wolf, Toy
+from .models import Wolf, Toy, Photo
+import uuid
+import boto3
 from .forms import FeedingForm
+# Add these "constant" variables below the imports
+S3_BASE_URL = 'https://s3.us-east-2.amazonaws.com/'
+BUCKET = 'wolfcollector'
+
 
 # Create your views here.
-
-# Define the home view
-
 
 def wolfs_detail(request, wolf_id):
   wolf = Wolf.objects.get(id=wolf_id)
@@ -22,7 +25,7 @@ def add_feeding(request, wolf_id):
   # validate the form
   if form.is_valid():
     # don't save the form to the db until it
-    # has the cat_id assigned
+    # has the wolf_id assigned
     new_feeding = form.save(commit=False)
     new_feeding.wolf_id = wolf_id
     new_feeding.save()
@@ -78,6 +81,23 @@ def remove_toy(request, wolf_id, toy_id):
 	Wolf.objects.get(id=wolf_id).toys.remove(toy_id)
 	return redirect('detail', wolf_id=wolf_id)
 
+def add_photo(request, wolf_id):
+    # photo-file will be the "name" attribute on the <input type="file">
+    photo_file = request.FILES.get('photo-file', None)
+    if photo_file:
+        s3 = boto3.client('s3')
+        # need a unique "key" for S3 / needs image file extension too
+        key = 'wolfcollector/' + uuid.uuid4().hex[:6] + photo_file.name[photo_file.name.rfind('.'):]
+        # just in case something goes wrong
+        try:
+            s3.upload_fileobj(photo_file, BUCKET, key)
+            # build the full url string
+            url = f"{S3_BASE_URL}{BUCKET}/{key}"
+            # we can assign to wolf_id or wolf (if you have a wolf object)
+            Photo.objects.create(url=url, wolf_id=wolf_id)
+        except:
+            print('An error occurred uploading file to S3')
+    return redirect('detail', wolf_id=wolf_id)
 
 
 
